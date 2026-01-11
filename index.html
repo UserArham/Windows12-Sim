@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Windows 12 Simulator</title>
 <style>
+/* ---------- Desktop ---------- */
 body, html {
   margin:0;
   padding:0;
   width:100%;
   height:100%;
   font-family:"Segoe UI",sans-serif;
+  background:#222;
 }
 
 .desktop {
@@ -21,11 +23,10 @@ body, html {
   background-image: url("https://wallpapercave.com/wp/wp13842758.png");
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
   filter: brightness(0.95);
 }
 
-/* ---------- Icons ---------- */
+/* ---------- Desktop Icons ---------- */
 .icon {
   width:100px;
   text-align:center;
@@ -36,54 +37,55 @@ body, html {
   user-select:none;
   font-weight:500;
   text-shadow: 0 0 5px rgba(0,0,0,0.7);
+  transition:0.2s;
 }
 .icon:hover {
-  color:#fffc;
+  color:#fff;
   transform:scale(1.05);
-  transition:0.2s;
 }
 
 /* ---------- Windows ---------- */
 .window {
   width:350px;
   height:250px;
-  background:#f7f5fb;
-  border:1px solid #b0aee0;
-  box-shadow:4px 4px 15px rgba(0,0,0,0.15);
+  background:#f7f7f7;
+  border:1px solid #888;
+  box-shadow:4px 4px 20px rgba(0,0,0,0.3);
   display:flex;
   flex-direction:column;
   position:absolute;
-  border-radius:8px;
+  border-radius:6px;
   overflow:hidden;
   resize:both;
+  font-size:14px;
 }
 .title-bar {
-  background:#8e9cf3;
+  background:#4a60d1;
   color:white;
-  padding:5px;
+  padding:5px 10px;
   display:flex;
   justify-content:space-between;
   align-items:center;
   cursor:move;
-  border-bottom:1px solid #d0cfff;
-}
-.window-content {
-  padding:10px;
-  flex:1;
-  overflow:auto;
-  background:white;
 }
 .title-bar button {
-  background:#f06;
-  color:white;
+  width:22px;
+  height:22px;
+  background:#ff5f56;
   border:none;
-  border-radius:3px;
+  border-radius:50%;
   cursor:pointer;
-  font-weight:bold;
-  width:25px;
-  height:25px;
 }
-.title-bar button:hover {background:#d04;}
+.title-bar button:hover {background:#ff1f1f;}
+.window-content {
+  flex:1;
+  padding:10px;
+  overflow:auto;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
 
 /* ---------- Taskbar ---------- */
 .taskbar {
@@ -91,23 +93,20 @@ body, html {
   bottom:0;
   width:100%;
   height:40px;
-  background:rgba(95,101,192,0.9);
-  color:#f7f5fb;
+  background:rgba(60,60,200,0.9);
+  color:white;
   display:flex;
   align-items:center;
   padding:0 10px;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.3);
   font-weight:bold;
-  box-shadow:0 -2px 10px rgba(0,0,0,0.1);
-  backdrop-filter: blur(5px);
 }
 .start-button {
   background:rgba(255,255,255,0.2);
   border:none;
   color:white;
-  padding:5px 10px;
-  margin-right:10px;
+  padding:5px 12px;
   cursor:pointer;
-  font-weight:bold;
   border-radius:4px;
 }
 .start-button:hover {background:rgba(255,255,255,0.4);}
@@ -117,12 +116,11 @@ body, html {
   position:absolute;
   bottom:40px;
   left:10px;
-  width:200px;
+  width:220px;
   max-height:400px;
-  background:rgba(255,255,255,0.95);
+  background:#f7f7f7;
   border:1px solid #888;
   border-radius:5px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.2);
   overflow-y:auto;
   display:none;
   z-index:9999;
@@ -130,8 +128,32 @@ body, html {
 .start-menu div {
   padding:8px 10px;
   cursor:pointer;
+  border-bottom:1px solid #ddd;
 }
-.start-menu div:hover {background:#8e9cf3; color:white;}
+.start-menu div:hover {background:#4a60d1; color:white;}
+
+/* ---------- Styled Elements ---------- */
+textarea, input[type=text], input[type=email], input[type=number], select {
+  width:100%;
+  padding:6px;
+  border:1px solid #aaa;
+  border-radius:4px;
+  font-size:14px;
+  box-sizing:border-box;
+}
+button.app-btn {
+  background:#4a60d1;
+  color:white;
+  border:none;
+  padding:5px 8px;
+  border-radius:4px;
+  cursor:pointer;
+}
+button.app-btn:hover {background:#2d3ca7;}
+table {border-collapse:collapse; width:100%;}
+table, th, td {border:1px solid #888; text-align:center; padding:4px;}
+th {background:#ddd;}
+canvas {border:1px solid #888; border-radius:4px;}
 </style>
 </head>
 <body>
@@ -153,8 +175,7 @@ function makeWindow(title, contentElement){
   winDiv.style.zIndex=Date.now();
   winDiv.innerHTML=`<div class="title-bar">${title} <button>X</button></div><div class="window-content"></div>`;
   desktop.appendChild(winDiv);
-  const content=winDiv.querySelector('.window-content');
-  content.appendChild(contentElement);
+  winDiv.querySelector('.window-content').appendChild(contentElement);
 
   // Close button
   winDiv.querySelector('button').onclick=()=>winDiv.remove();
@@ -170,23 +191,23 @@ function makeWindow(title, contentElement){
   };
 }
 
-/* ---------- Apps ---------- */
+/* ---------- Apps (Polished Interiors) ---------- */
 const apps=[
 {name:"Calculator",run:()=>{
   const div=document.createElement('div');
-  const a=document.createElement('input'); a.type='number'; a.placeholder='Num1';
-  const b=document.createElement('input'); b.type='number'; b.placeholder='Num2';
-  const btn=document.createElement('button'); btn.innerText='Add';
+  const a=document.createElement('input'); a.type='number'; a.placeholder='Num 1';
+  const b=document.createElement('input'); b.type='number'; b.placeholder='Num 2';
+  const btn=document.createElement('button'); btn.className='app-btn'; btn.innerText='Add';
   const res=document.createElement('p');
   btn.onclick=()=>{res.innerText='Result: '+(parseFloat(a.value||0)+parseFloat(b.value||0));};
   div.append(a,b,btn,res); return div;
 }},
-{name:"Notepad",run:()=>{const ta=document.createElement('textarea'); ta.style.width='100%'; ta.style.height='100%'; return ta;}},
-{name:"Sticky Notes",run:()=>{const ta=document.createElement('textarea');ta.style.width='100%'; ta.style.height='100%'; ta.value=localStorage.getItem('sticky')||'';ta.oninput=()=>localStorage.setItem('sticky',ta.value);return ta;}},
-{name:"Clock",run:()=>{const p=document.createElement('p');p.style.fontSize='24px';function update(){p.innerText=new Date().toLocaleTimeString();}update();setInterval(update,1000);return p;}},
+{name:"Notepad",run:()=>{const ta=document.createElement('textarea'); ta.style.height='100%'; ta.placeholder='Write notes here...'; return ta;}},
+{name:"Clock",run:()=>{const p=document.createElement('p'); p.style.fontSize='24px'; function update(){p.innerText=new Date().toLocaleTimeString();} update(); setInterval(update,1000); return p;}},
+{name:"Sticky Notes",run:()=>{const ta=document.createElement('textarea'); ta.style.height='100%'; ta.value=localStorage.getItem('sticky')||''; ta.oninput=()=>localStorage.setItem('sticky',ta.value); return ta;}},
 {name:"Paint",run:()=>{
-  const canvas=document.createElement('canvas');canvas.width=300;canvas.height=200;
-  const ctx=canvas.getContext('2d');ctx.strokeStyle='black';ctx.lineWidth=2;
+  const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200;
+  const ctx=canvas.getContext('2d'); ctx.lineWidth=2; ctx.strokeStyle='black';
   let drawing=false;
   canvas.onmousedown=e=>drawing=true;
   canvas.onmouseup=e=>drawing=false;
@@ -194,35 +215,28 @@ const apps=[
   return canvas;
 }},
 {name:"Command Prompt",run:()=>{
-  const ta=document.createElement('textarea'); ta.style.width='100%'; ta.style.height='100%'; ta.value="> "; 
-  ta.onkeydown=(e)=>{
-    if(e.key==='Enter'){
-      const cmd=ta.value.split('\n').pop().replace('> ','');
-      if(cmd==='run c'){ta.value+="\nHello from C App!\n> ";}
-      else if(cmd==='run cpp'){ta.value+="\nHello from C++ App!\n> ";}
-      else{ta.value+="\nUnknown command\n> ";}
-      e.preventDefault();
-    }};
+  const ta=document.createElement('textarea'); ta.style.height='100%'; ta.value="> ";
+  ta.onkeydown=(e)=>{if(e.key==='Enter'){const cmd=ta.value.split('\n').pop().replace('> ',''); ta.value+="\nExecuted: "+cmd+"\n> "; e.preventDefault();}};
   return ta;
 }},
-{name:"C App Simulator",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C program output"; return p;}},
-{name:"C++ App Simulator",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C++ program output"; return p;}},
+{name:"C App Simulator",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C output"; return p;}},
+{name:"C++ App Simulator",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C++ output"; return p;}},
 {name:"Music",run:()=>{const audio=document.createElement('audio'); audio.controls=true; audio.src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"; return audio;}},
 {name:"Video Player",run:()=>{const vid=document.createElement('video'); vid.controls=true; vid.width=320; vid.src="https://www.w3schools.com/html/mov_bbb.mp4"; return vid;}},
-{name:"Photos",run:()=>{const div=document.createElement('div'); for(let i=1;i<=3;i++){const img=document.createElement('img'); img.src=`https://picsum.photos/200/150?random=${i}`; img.style.margin='5px'; div.appendChild(img);} return div;}},
-{name:"Word",run:()=>{const ta=document.createElement('textarea'); ta.style.width='100%'; ta.style.height='100%'; ta.placeholder="Write your document here..."; return ta;}},
-{name:"Excel",run:()=>{const table=document.createElement('table'); table.border='1'; for(let i=0;i<5;i++){const tr=document.createElement('tr'); for(let j=0;j<5;j++){const td=document.createElement('td'); td.contentEditable=true; td.innerText=i*5+j; tr.appendChild(td);} table.appendChild(tr);} return table;}},
-{name:"PowerPoint",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>Slide 1: Welcome!</p><p>Slide 2: Features</p><p>Slide 3: Thank you</p>'; return div;}},
-{name:"Camera",run:()=>{const vid=document.createElement('video'); vid.autoplay=true; navigator.mediaDevices.getUserMedia({video:true}).then(stream=>vid.srcObject=stream).catch(()=>vid.innerText="Camera access denied"); return vid;}},
-{name:"Snipping Tool",run:()=>{const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200; canvas.style.border='1px solid black'; const ctx=canvas.getContext('2d'); return canvas;}},
-{name:"Weather",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>Location: NYC</p><p>Temp: 12°C</p><p>Condition: Sunny</p>'; return div;}},
+{name:"Photos",run:()=>{const div=document.createElement('div'); for(let i=1;i<=3;i++){const img=document.createElement('img'); img.src=`https://picsum.photos/200/150?random=${i}`; img.style.margin='3px'; div.appendChild(img);} return div;}},
+{name:"Word",run:()=>{const ta=document.createElement('textarea'); ta.style.height='100%'; ta.placeholder="Document editor"; return ta;}},
+{name:"Excel",run:()=>{const table=document.createElement('table'); for(let i=0;i<5;i++){const tr=document.createElement('tr'); for(let j=0;j<5;j++){const td=document.createElement('td'); td.contentEditable=true; td.innerText=i*5+j; tr.appendChild(td);} table.appendChild(tr);} return table;}},
+{name:"PowerPoint",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>Slide 1: Welcome</p><p>Slide 2: Features</p><p>Slide 3: Thank you</p>'; return div;}},
+{name:"Camera",run:()=>{const vid=document.createElement('video'); vid.autoplay=true; navigator.mediaDevices.getUserMedia({video:true}).then(s=>vid.srcObject=s).catch(()=>vid.innerText="Camera denied"); return vid;}},
+{name:"Snipping Tool",run:()=>{const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200; canvas.style.border='1px solid #888'; return canvas;}},
+{name:"Weather",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>NYC</p><p>Temp: 12°C</p><p>Sunny</p>'; return div;}},
 {name:"Maps",run:()=>{const iframe=document.createElement('iframe'); iframe.width='100%'; iframe.height='200'; iframe.src='https://www.openstreetmap.org/export/embed.html?bbox=-74.02%2C40.70%2C-73.95%2C40.75&layer=mapnik'; return iframe;}},
 {name:"Control Panel",run:()=>{const div=document.createElement('div'); div.innerHTML='<label>Volume: <input type="range" min="0" max="100" value="50"></label><br><label>Brightness: <input type="range" min="0" max="100" value="70"></label>'; return div;}},
-{name:"Windows Update",run:()=>{const p=document.createElement('p'); p.innerText='Checking for updates...'; setTimeout(()=>p.innerText='All updates installed',2000); return p;}},
+{name:"Windows Update",run:()=>{const p=document.createElement('p'); p.innerText='Checking updates...'; setTimeout(()=>p.innerText='All updates installed',2000); return p;}},
 {name:"Photoshop",run:()=>{const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200; const ctx=canvas.getContext('2d'); ctx.fillStyle='lightblue'; ctx.fillRect(0,0,300,200); return canvas;}},
-{name:"Games / Solitaire",run:()=>{const p=document.createElement('p'); p.innerText='Solitaire game placeholder'; return p;}},
-{name:"Mail",run:()=>{const form=document.createElement('form'); form.innerHTML='<label>To: <input type="email"></label><br><label>Subject: <input type="text"></label><br><textarea placeholder="Message"></textarea><br><button type="submit">Send</button>'; return form;}},
-{name:"Calendar",run:()=>{const table=document.createElement('table'); table.border='1'; const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; const tr=document.createElement('tr'); days.forEach(d=>{const th=document.createElement('th'); th.innerText=d; tr.appendChild(th);}); table.appendChild(tr); for(let i=0;i<5;i++){const row=document.createElement('tr'); for(let j=1;j<=7;j++){const td=document.createElement('td'); td.innerText=(i*7+j); row.appendChild(td);} table.appendChild(row);} return table;}},
+{name:"Games / Solitaire",run:()=>{const p=document.createElement('p'); p.innerText='Solitaire game demo'; return p;}},
+{name:"Mail",run:()=>{const form=document.createElement('form'); form.innerHTML='<label>To: <input type="email"></label><br><label>Subject: <input type="text"></label><br><textarea placeholder="Message"></textarea><br><button class="app-btn" type="submit">Send</button>'; return form;}},
+{name:"Calendar",run:()=>{const table=document.createElement('table'); const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; const tr=document.createElement('tr'); days.forEach(d=>{const th=document.createElement('th'); th.innerText=d; tr.appendChild(th);}); table.appendChild(tr); for(let i=0;i<5;i++){const row=document.createElement('tr'); for(let j=1;j<=7;j++){const td=document.createElement('td'); td.innerText=(i*7+j); row.appendChild(td);} table.appendChild(row);} return table;}},
 {name:"File Explorer",run:()=>{const ul=document.createElement('ul'); ['Documents','Downloads','Pictures','Music'].forEach(f=>{const li=document.createElement('li'); li.innerText=f; ul.appendChild(li);}); return ul;}},
 {name:"Settings",run:()=>{const div=document.createElement('div'); div.innerHTML='<label>Dark Mode: <input type="checkbox"></label><br><label>Notifications: <input type="checkbox" checked></label>'; return div;}},
 ];
@@ -243,14 +257,10 @@ startBtn.onclick=()=>{
   startMenu.innerHTML='';
   apps.forEach(app=>{
     const div=document.createElement('div'); div.innerText=app.name;
-    div.onclick=()=>{
-      makeWindow(app.name,app.run());
-      startMenu.style.display='none';
-    };
+    div.onclick=()=>{makeWindow(app.name,app.run()); startMenu.style.display='none';};
     startMenu.appendChild(div);
   });
 };
-// Click outside to close start menu
 document.addEventListener('click', e=>{
   if(!startBtn.contains(e.target) && !startMenu.contains(e.target)) startMenu.style.display='none';
 });
