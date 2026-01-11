@@ -3,227 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Windows 12 Simulator - Lavender Blue Theme</title>
+<title>Windows 12 Simulator</title>
 <style>
-  /* ----- Basic Reset ----- */
-  body, html { margin:0; padding:0; width:100%; height:100%; font-family:sans-serif; }
+body, html {
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  font-family:"Segoe UI",sans-serif;
+}
 
-  /* ----- Desktop ----- */
-  .desktop {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(-45deg, #c4c4f1, #a0c4ff, #d2c4ff, #c4d4ff);
-    background-size: 400% 400%;
-    animation: glow 20s ease infinite;
-  }
+.desktop {
+  width:100vw;
+  height:100vh;
+  position:relative;
+  overflow:hidden;
+  background-image: url("https://wallpapercave.com/wp/wp13842758.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(0.95);
+}
 
-  @keyframes glow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+/* ---------- Icons ---------- */
+.icon {
+  width:100px;
+  text-align:center;
+  margin:10px;
+  cursor:pointer;
+  color:#f0f0f0;
+  display:inline-block;
+  user-select:none;
+  font-weight:500;
+  text-shadow: 0 0 5px rgba(0,0,0,0.7);
+}
+.icon:hover {
+  color:#fffc;
+  transform:scale(1.05);
+  transition:0.2s;
+}
 
-  /* ----- Desktop Icons ----- */
-  .icon {
-    width: 100px;
-    text-align: center;
-    margin: 10px;
-    cursor: pointer;
-    color: #4b4b7b;
-    display: inline-block;
-    user-select: none;
-    font-weight: 500;
-  }
-  .icon:hover {
-    color: #726dcf;
-    transform: scale(1.05);
-    transition: 0.2s;
-  }
+/* ---------- Windows ---------- */
+.window {
+  width:350px;
+  height:250px;
+  background:#f7f5fb;
+  border:1px solid #b0aee0;
+  box-shadow:4px 4px 15px rgba(0,0,0,0.15);
+  display:flex;
+  flex-direction:column;
+  position:absolute;
+  border-radius:8px;
+  overflow:hidden;
+  resize:both; /* <-- makes it resizable */
+}
+.title-bar {
+  background:#8e9cf3;
+  color:white;
+  padding:5px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:move;
+  border-bottom:1px solid #d0cfff;
+}
+.window-content {
+  padding:10px;
+  flex:1;
+  overflow:auto;
+  background:white;
+}
+.title-bar button {
+  background:#f06;
+  color:white;
+  border:none;
+  border-radius:3px;
+  cursor:pointer;
+  font-weight:bold;
+  width:25px;
+  height:25px;
+}
+.title-bar button:hover {background:#d04;}
 
-  /* ----- Windows ----- */
-  .window {
-    width: 350px;
-    height: 250px;
-    background: #f7f5fb;
-    border: 1px solid #b0aee0;
-    box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-  }
+/* ---------- Taskbar ---------- */
+.taskbar {
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:40px;
+  background:rgba(95,101,192,0.9);
+  color:#f7f5fb;
+  display:flex;
+  align-items:center;
+  padding:0 10px;
+  font-weight:bold;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px);
+}
+.start-button {
+  background:rgba(255,255,255,0.2);
+  border:none;
+  color:white;
+  padding:5px 10px;
+  margin-right:10px;
+  cursor:pointer;
+  font-weight:bold;
+  border-radius:4px;
+}
+.start-button:hover {background:rgba(255,255,255,0.4);}
 
-  .title-bar {
-    background: #8e9cf3;
-    color: #ffffff;
-    padding: 5px;
-    display: flex;
-    justify-content: space-between;
-    cursor: move;
-    border-bottom: 1px solid #d0cfff;
-  }
-
-  .window-content {
-    padding: 10px;
-    flex: 1;
-    overflow:auto;
-  }
-
-  /* ----- Taskbar ----- */
-  .taskbar {
-    position: absolute;
-    bottom:0;
-    width: 100%;
-    height: 40px;
-    background: #5f65c0;
-    color: #f7f5fb;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    font-weight: bold;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-  }
-
-  /* ----- Inputs & Buttons ----- */
-  input, textarea, button { margin: 5px 0; }
-  textarea { width:100%; height:100%; resize:none; }
+/* ---------- Start Menu ---------- */
+.start-menu {
+  position:absolute;
+  bottom:40px;
+  left:10px;
+  width:200px;
+  max-height:400px;
+  background:rgba(255,255,255,0.95);
+  border:1px solid #888;
+  border-radius:5px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+  overflow-y:auto;
+  display:none;
+  z-index:9999;
+}
+.start-menu div {
+  padding:8px 10px;
+  cursor:pointer;
+}
+.start-menu div:hover {background:#8e9cf3; color:white;}
 </style>
 </head>
 <body>
-
 <div class="desktop" id="desktop">
-  <div class="taskbar">Start | Taskbar Apps</div>
+  <div class="taskbar">
+    <button class="start-button" id="startBtn">Start</button>
+  </div>
+  <div class="start-menu" id="startMenu"></div>
 </div>
 
 <script>
-const desktop = document.getElementById('desktop');
-let zIndexCounter = 1;
+/* ---------- Window Function ---------- */
+function makeWindow(title, contentElement){
+  const desktop=document.getElementById('desktop');
+  const winDiv=document.createElement('div');
+  winDiv.className='window';
+  winDiv.style.left='50px';
+  winDiv.style.top='50px';
+  winDiv.style.zIndex=Date.now();
+  winDiv.innerHTML=`<div class="title-bar">${title} <button>X</button></div><div class="window-content"></div>`;
+  desktop.appendChild(winDiv);
+  const content=winDiv.querySelector('.window-content');
+  content.appendChild(contentElement);
+  
+  // Close button
+  winDiv.querySelector('button').onclick=()=>winDiv.remove();
+  
+  // Dragging
+  const titleBar=winDiv.querySelector('.title-bar');
+  titleBar.onmousedown=(e)=>{
+    const offsetX=e.clientX-winDiv.offsetLeft;
+    const offsetY=e.clientY-winDiv.offsetTop;
+    function move(e){winDiv.style.left=e.clientX-offsetX+'px';winDiv.style.top=e.clientY-offsetY+'px';}
+    document.addEventListener('mousemove',move);
+    document.addEventListener('mouseup',()=>document.removeEventListener('mousemove',move),{once:true});
+  };
+}
 
-// ----- Apps -----
-const apps = [
-  { name: "Calculator", emoji:"🧮" },
-  { name: "Notepad", emoji:"📝" },
-  { name: "File Explorer", emoji:"🗂️" },
-  { name: "Settings", emoji:"⚙️" },
-  { name: "Microsoft Edge", emoji:"🌐" },
-  { name: "Mail", emoji:"✉️" },
-  { name: "Calendar", emoji:"📅" },
-  { name: "Photos", emoji:"🖼️" },
-  { name: "Music", emoji:"🎵" },
-  { name: "Video Player", emoji:"🎬" },
-  { name: "Paint", emoji:"🎨" },
-  { name: "Word", emoji:"📝" },
-  { name: "Excel", emoji:"📊" },
-  { name: "PowerPoint", emoji:"📈" },
-  { name: "Camera", emoji:"📷" },
-  { name: "Snipping Tool", emoji:"✂️" },
-  { name: "Weather", emoji:"☀️" },
-  { name: "Clock", emoji:"⏰" },
-  { name: "Maps", emoji:"🗺️" },
-  { name: "Command Prompt", emoji:"💻" },
-  { name: "Control Panel", emoji:"🖥️" },
-  { name: "Windows Update", emoji:"🔄" },
-  { name: "Photoshop", emoji:"🖌️" },
-  { name: "Games / Solitaire", emoji:"🃏" },
-  { name: "Sticky Notes", emoji:"🗒️" },
-  { name: "Voice Recorder", emoji:"🎤" }
+/* ---------- Apps ---------- */
+const apps=[
+{name:"Calculator",run:()=>{
+  const div=document.createElement('div');
+  const a=document.createElement('input'); a.type='number'; a.placeholder='Num1';
+  const b=document.createElement('input'); b.type='number'; b.placeholder='Num2';
+  const btn=document.createElement('button'); btn.innerText='Add';
+  const res=document.createElement('p');
+  btn.onclick=()=>{res.innerText='Result: '+(parseFloat(a.value||0)+parseFloat(b.value||0));};
+  div.append(a,b,btn,res); return div;
+}},
+{name:"Notepad",run:()=>{const ta=document.createElement('textarea');return ta;}},
+{name:"Sticky Notes",run:()=>{const ta=document.createElement('textarea');ta.value=localStorage.getItem('sticky')||'';ta.oninput=()=>localStorage.setItem('sticky',ta.value);return ta;}},
+{name:"Clock",run:()=>{const p=document.createElement('p');function update(){p.innerText=new Date().toLocaleTimeString();}update();setInterval(update,1000);return p;}},
+{name:"Paint",run:()=>{
+  const canvas=document.createElement('canvas');canvas.width=300;canvas.height=200;
+  const ctx=canvas.getContext('2d');ctx.strokeStyle='black';ctx.lineWidth=2;
+  let drawing=false;
+  canvas.onmousedown=e=>drawing=true;
+  canvas.onmouseup=e=>drawing=false;
+  canvas.onmousemove=e=>{if(drawing){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke();ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY);}};
+  return canvas;
+}},
+{name:"Command Prompt",run:()=>{
+  const ta=document.createElement('textarea');ta.value="> ";ta.onkeydown=(e)=>{
+    if(e.key==='Enter'){
+      const cmd=ta.value.split('\n').pop().replace('> ','');
+      if(cmd==='run c'){ta.value+="\nHello from simulated C App!\n> ";}
+      else if(cmd==='run cpp'){ta.value+="\nHello from simulated C++ App!\n> ";}
+      else{ta.value+="\nUnknown command\n> ";}
+      e.preventDefault();
+    }};
+  return ta;
+}},
+{name:"C App Simulator",run:()=>{const p=document.createElement('p');p.innerText="Hello from simulated C App!";return p;}},
+{name:"C++ App Simulator",run:()=>{const p=document.createElement('p');p.innerText="Hello from simulated C++ App!";return p;}},
+{name:"Music",run:()=>{const p=document.createElement('p');p.innerText="Music app demo";return p;}},
+{name:"Video Player",run:()=>{const p=document.createElement('p');p.innerText="Video player demo";return p;}},
+{name:"Photos",run:()=>{const p=document.createElement('p');p.innerText="Photos viewer demo";return p;}},
+{name:"Word",run:()=>{const p=document.createElement('p');p.innerText="Word processor demo";return p;}},
+{name:"Excel",run:()=>{const p=document.createElement('p');p.innerText="Excel demo";return p;}},
+{name:"PowerPoint",run:()=>{const p=document.createElement('p');p.innerText="PowerPoint demo";return p;}},
+{name:"Camera",run:()=>{const p=document.createElement('p');p.innerText="Camera demo";return p;}},
+{name:"Snipping Tool",run:()=>{const p=document.createElement('p');p.innerText="Snipping tool demo";return p;}},
+{name:"Weather",run:()=>{const p=document.createElement('p');p.innerText="Weather demo";return p;}},
+{name:"Maps",run:()=>{const p=document.createElement('p');p.innerText="Maps demo";return p;}},
+{name:"Control Panel",run:()=>{const p=document.createElement('p');p.innerText="Control panel demo";return p;}},
+{name:"Windows Update",run:()=>{const p=document.createElement('p');p.innerText="Windows update demo";return p;}},
+{name:"Photoshop",run:()=>{const p=document.createElement('p');p.innerText="Photoshop demo";return p;}},
+{name:"Games / Solitaire",run:()=>{const p=document.createElement('p');p.innerText="Solitaire demo";return p;}},
+{name:"Mail",run:()=>{const p=document.createElement('p');p.innerText="Mail demo";return p;}},
+{name:"Calendar",run:()=>{const p=document.createElement('p');p.innerText="Calendar demo";return p;}},
+{name:"File Explorer",run:()=>{const p=document.createElement('p');p.innerText="File Explorer demo";return p;}},
+{name:"Settings",run:()=>{const p=document.createElement('p');p.innerText="Settings demo";return p;}},
 ];
 
-// ----- Create desktop icons -----
+/* ---------- Desktop Icons ---------- */
+const desktop=document.getElementById('desktop');
 apps.forEach(app=>{
-  const icon = document.createElement('div');
-  icon.className = 'icon';
-  icon.innerHTML = `${app.emoji} ${app.name}`;
-  icon.ondblclick = ()=>openWindow(app.name);
+  const icon=document.createElement('div');icon.className='icon';icon.innerText=app.name;
+  icon.ondblclick=()=>{makeWindow(app.name,app.run());};
   desktop.appendChild(icon);
 });
 
-// ----- Open window -----
-function openWindow(name){
-  const winId = 'win' + Date.now();
-  const winDiv = document.createElement('div');
-  winDiv.className = 'window';
-  winDiv.id = winId;
-  winDiv.style.zIndex = zIndexCounter++;
-
-  winDiv.innerHTML = `
-    <div class="title-bar">${name} <button style="cursor:pointer;">X</button></div>
-    <div class="window-content"></div>
-  `;
-  desktop.appendChild(winDiv);
-
-  // Close button
-  winDiv.querySelector('button').onclick = ()=>winDiv.remove();
-
-  // Drag
-  const titleBar = winDiv.querySelector('.title-bar');
-  titleBar.onmousedown = (e)=>{
-    const offsetX = e.clientX - winDiv.offsetLeft;
-    const offsetY = e.clientY - winDiv.offsetTop;
-
-    function moveAt(e){
-      winDiv.style.left = e.clientX - offsetX + 'px';
-      winDiv.style.top = e.clientY - offsetY + 'px';
-    }
-
-    document.addEventListener('mousemove', moveAt);
-    document.addEventListener('mouseup', ()=>document.removeEventListener('mousemove', moveAt), {once:true});
-  };
-
-  // Fill content
-  const content = winDiv.querySelector('.window-content');
-  switch(name){
-    case "Calculator": content.appendChild(Calculator()); break;
-    case "Notepad": content.appendChild(Notepad()); break;
-    case "Clock": content.appendChild(Clock()); break;
-    case "Sticky Notes": content.appendChild(StickyNotes()); break;
-    default: content.innerHTML = `<p>${name} content goes here.</p>`;
-  }
-}
-
-// ----------------- App Components -----------------
-function Calculator(){
-  const container = document.createElement('div');
-  const inputA = document.createElement('input'); inputA.placeholder="Number 1"; inputA.type="number";
-  const inputB = document.createElement('input'); inputB.placeholder="Number 2"; inputB.type="number";
-  const btn = document.createElement('button'); btn.innerText="Add";
-  const result = document.createElement('p');
-
-  btn.onclick = ()=>{
-    const a = parseFloat(inputA.value)||0;
-    const b = parseFloat(inputB.value)||0;
-    result.innerText = "Result: " + (a+b);
-  }
-
-  container.appendChild(inputA);
-  container.appendChild(inputB);
-  container.appendChild(btn);
-  container.appendChild(result);
-  return container;
-}
-
-function Notepad(){
-  const ta = document.createElement('textarea');
-  return ta;
-}
-
-function Clock(){
-  const p = document.createElement('p');
-  function updateTime(){ p.innerText = new Date().toLocaleTimeString(); }
-  updateTime();
-  setInterval(updateTime,1000);
-  return p;
-}
-
-function StickyNotes(){
-  const ta = document.createElement('textarea');
-  const key = 'stickyNote';
-  ta.value = localStorage.getItem(key) || '';
-  ta.oninput = ()=>localStorage.setItem(key, ta.value);
-  return ta;
-}
+/* ---------- Start Menu ---------- */
+const startBtn=document.getElementById('startBtn');
+const startMenu=document.getElementById('startMenu');
+startBtn.onclick=()=>{
+  startMenu.style.display = startMenu.style.display==='block'?'none':'block';
+  startMenu.innerHTML='';
+  apps.forEach(app=>{
+    const div=document.createElement('div'); div.innerText=app.name;
+    div.onclick=()=>{
+      makeWindow(app.name,app.run());
+      startMenu.style.display='none';
+    };
+    startMenu.appendChild(div);
+  });
+};
+// Click outside to close start menu
+document.addEventListener('click', e=>{
+  if(!startBtn.contains(e.target) && !startMenu.contains(e.target)) startMenu.style.display='none';
+});
 </script>
-
 </body>
 </html>
