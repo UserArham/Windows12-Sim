@@ -55,7 +55,7 @@ body, html {
   position:absolute;
   border-radius:8px;
   overflow:hidden;
-  resize:both; /* <-- makes it resizable */
+  resize:both;
 }
 .title-bar {
   background:#8e9cf3;
@@ -155,10 +155,10 @@ function makeWindow(title, contentElement){
   desktop.appendChild(winDiv);
   const content=winDiv.querySelector('.window-content');
   content.appendChild(contentElement);
-  
+
   // Close button
   winDiv.querySelector('button').onclick=()=>winDiv.remove();
-  
+
   // Dragging
   const titleBar=winDiv.querySelector('.title-bar');
   titleBar.onmousedown=(e)=>{
@@ -181,9 +181,9 @@ const apps=[
   btn.onclick=()=>{res.innerText='Result: '+(parseFloat(a.value||0)+parseFloat(b.value||0));};
   div.append(a,b,btn,res); return div;
 }},
-{name:"Notepad",run:()=>{const ta=document.createElement('textarea');return ta;}},
-{name:"Sticky Notes",run:()=>{const ta=document.createElement('textarea');ta.value=localStorage.getItem('sticky')||'';ta.oninput=()=>localStorage.setItem('sticky',ta.value);return ta;}},
-{name:"Clock",run:()=>{const p=document.createElement('p');function update(){p.innerText=new Date().toLocaleTimeString();}update();setInterval(update,1000);return p;}},
+{name:"Notepad",run:()=>{const ta=document.createElement('textarea'); ta.style.width='100%'; ta.style.height='100%'; return ta;}},
+{name:"Sticky Notes",run:()=>{const ta=document.createElement('textarea');ta.style.width='100%'; ta.style.height='100%'; ta.value=localStorage.getItem('sticky')||'';ta.oninput=()=>localStorage.setItem('sticky',ta.value);return ta;}},
+{name:"Clock",run:()=>{const p=document.createElement('p');p.style.fontSize='24px';function update(){p.innerText=new Date().toLocaleTimeString();}update();setInterval(update,1000);return p;}},
 {name:"Paint",run:()=>{
   const canvas=document.createElement('canvas');canvas.width=300;canvas.height=200;
   const ctx=canvas.getContext('2d');ctx.strokeStyle='black';ctx.lineWidth=2;
@@ -194,36 +194,37 @@ const apps=[
   return canvas;
 }},
 {name:"Command Prompt",run:()=>{
-  const ta=document.createElement('textarea');ta.value="> ";ta.onkeydown=(e)=>{
+  const ta=document.createElement('textarea'); ta.style.width='100%'; ta.style.height='100%'; ta.value="> "; 
+  ta.onkeydown=(e)=>{
     if(e.key==='Enter'){
       const cmd=ta.value.split('\n').pop().replace('> ','');
-      if(cmd==='run c'){ta.value+="\nHello from simulated C App!\n> ";}
-      else if(cmd==='run cpp'){ta.value+="\nHello from simulated C++ App!\n> ";}
+      if(cmd==='run c'){ta.value+="\nHello from C App!\n> ";}
+      else if(cmd==='run cpp'){ta.value+="\nHello from C++ App!\n> ";}
       else{ta.value+="\nUnknown command\n> ";}
       e.preventDefault();
     }};
   return ta;
 }},
-{name:"C App Simulator",run:()=>{const p=document.createElement('p');p.innerText="Hello from simulated C App!";return p;}},
-{name:"C++ App Simulator",run:()=>{const p=document.createElement('p');p.innerText="Hello from simulated C++ App!";return p;}},
-{name:"Music",run:()=>{const p=document.createElement('p');p.innerText="Music app demo";return p;}},
-{name:"Video Player",run:()=>{const p=document.createElement('p');p.innerText="Video player demo";return p;}},
-{name:"Photos",run:()=>{const p=document.createElement('p');p.innerText="Photos viewer demo";return p;}},
-{name:"Word",run:()=>{const p=document.createElement('p');p.innerText="Word processor demo";return p;}},
-{name:"Excel",run:()=>{const p=document.createElement('p');p.innerText="Excel demo";return p;}},
-{name:"PowerPoint",run:()=>{const p=document.createElement('p');p.innerText="PowerPoint demo";return p;}},
-{name:"Camera",run:()=>{const p=document.createElement('p');p.innerText="Camera demo";return p;}},
-{name:"Snipping Tool",run:()=>{const p=document.createElement('p');p.innerText="Snipping tool demo";return p;}},
-{name:"Weather",run:()=>{const p=document.createElement('p');p.innerText="Weather demo";return p;}},
-{name:"Maps",run:()=>{const p=document.createElement('p');p.innerText="Maps demo";return p;}},
-{name:"Control Panel",run:()=>{const p=document.createElement('p');p.innerText="Control panel demo";return p;}},
-{name:"Windows Update",run:()=>{const p=document.createElement('p');p.innerText="Windows update demo";return p;}},
-{name:"Photoshop",run:()=>{const p=document.createElement('p');p.innerText="Photoshop demo";return p;}},
-{name:"Games / Solitaire",run:()=>{const p=document.createElement('p');p.innerText="Solitaire demo";return p;}},
-{name:"Mail",run:()=>{const p=document.createElement('p');p.innerText="Mail demo";return p;}},
-{name:"Calendar",run:()=>{const p=document.createElement('p');p.innerText="Calendar demo";return p;}},
-{name:"File Explorer",run:()=>{const p=document.createElement('p');p.innerText="File Explorer demo";return p;}},
-{name:"Settings",run:()=>{const p=document.createElement('p');p.innerText="Settings demo";return p;}},
+{name:"C App Simulator",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C program output"; return p;}},
+{name:"C++ App Simulator",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C++ program output"; return p;}},
+{name:"Music",run:()=>{const audio=document.createElement('audio'); audio.controls=true; audio.src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"; return audio;}},
+{name:"Video Player",run:()=>{const vid=document.createElement('video'); vid.controls=true; vid.width=320; vid.src="https://www.w3schools.com/html/mov_bbb.mp4"; return vid;}},
+{name:"Photos",run:()=>{const div=document.createElement('div'); for(let i=1;i<=3;i++){const img=document.createElement('img'); img.src=`https://picsum.photos/200/150?random=${i}`; img.style.margin='5px'; div.appendChild(img);} return div;}},
+{name:"Word",run:()=>{const ta=document.createElement('textarea'); ta.style.width='100%'; ta.style.height='100%'; ta.placeholder="Write your document here..."; return ta;}},
+{name:"Excel",run:()=>{const table=document.createElement('table'); table.border='1'; for(let i=0;i<5;i++){const tr=document.createElement('tr'); for(let j=0;j<5;j++){const td=document.createElement('td'); td.contentEditable=true; td.innerText=i*5+j; tr.appendChild(td);} table.appendChild(tr);} return table;}},
+{name:"PowerPoint",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>Slide 1: Welcome!</p><p>Slide 2: Features</p><p>Slide 3: Thank you</p>'; return div;}},
+{name:"Camera",run:()=>{const vid=document.createElement('video'); vid.autoplay=true; navigator.mediaDevices.getUserMedia({video:true}).then(stream=>vid.srcObject=stream).catch(()=>vid.innerText="Camera access denied"); return vid;}},
+{name:"Snipping Tool",run:()=>{const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200; canvas.style.border='1px solid black'; const ctx=canvas.getContext('2d'); return canvas;}},
+{name:"Weather",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>Location: NYC</p><p>Temp: 12°C</p><p>Condition: Sunny</p>'; return div;}},
+{name:"Maps",run:()=>{const iframe=document.createElement('iframe'); iframe.width='100%'; iframe.height='200'; iframe.src='https://www.openstreetmap.org/export/embed.html?bbox=-74.02%2C40.70%2C-73.95%2C40.75&layer=mapnik'; return iframe;}},
+{name:"Control Panel",run:()=>{const div=document.createElement('div'); div.innerHTML='<label>Volume: <input type="range" min="0" max="100" value="50"></label><br><label>Brightness: <input type="range" min="0" max="100" value="70"></label>'; return div;}},
+{name:"Windows Update",run:()=>{const p=document.createElement('p'); p.innerText='Checking for updates...'; setTimeout(()=>p.innerText='All updates installed',2000); return p;}},
+{name:"Photoshop",run:()=>{const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200; const ctx=canvas.getContext('2d'); ctx.fillStyle='lightblue'; ctx.fillRect(0,0,300,200); return canvas;}},
+{name:"Games / Solitaire",run:()=>{const p=document.createElement('p'); p.innerText='Solitaire game placeholder'; return p;}},
+{name:"Mail",run:()=>{const form=document.createElement('form'); form.innerHTML='<label>To: <input type="email"></label><br><label>Subject: <input type="text"></label><br><textarea placeholder="Message"></textarea><br><button type="submit">Send</button>'; return form;}},
+{name:"Calendar",run:()=>{const table=document.createElement('table'); table.border='1'; const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; const tr=document.createElement('tr'); days.forEach(d=>{const th=document.createElement('th'); th.innerText=d; tr.appendChild(th);}); table.appendChild(tr); for(let i=0;i<5;i++){const row=document.createElement('tr'); for(let j=1;j<=7;j++){const td=document.createElement('td'); td.innerText=(i*7+j); row.appendChild(td);} table.appendChild(row);} return table;}},
+{name:"File Explorer",run:()=>{const ul=document.createElement('ul'); ['Documents','Downloads','Pictures','Music'].forEach(f=>{const li=document.createElement('li'); li.innerText=f; ul.appendChild(li);}); return ul;}},
+{name:"Settings",run:()=>{const div=document.createElement('div'); div.innerHTML='<label>Dark Mode: <input type="checkbox"></label><br><label>Notifications: <input type="checkbox" checked></label>'; return div;}},
 ];
 
 /* ---------- Desktop Icons ---------- */
