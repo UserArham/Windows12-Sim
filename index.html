@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows 12 Simulator</title>
+<style>
+  body, html { margin:0; padding:0; width:100%; height:100%; font-family:sans-serif; }
+  .desktop { width:100vw; height:100vh; background: linear-gradient(to bottom right, #0078d7, #00bcf2); position:relative; overflow:hidden; }
+  .icon { width:100px; text-align:center; margin:10px; cursor:pointer; color:white; display:inline-block; user-select:none; }
+  .window { width:350px; height:250px; background:white; position:absolute; top:100px; left:100px; border:1px solid #000; box-shadow:2px 2px 10px rgba(0,0,0,0.5); display:flex; flex-direction:column; }
+  .title-bar { background:#0078d7; color:white; padding:5px; display:flex; justify-content:space-between; cursor:move; }
+  .window-content { padding:10px; flex:1; overflow:auto; }
+  .taskbar { position:absolute; bottom:0; width:100%; height:40px; background:#333; color:white; display:flex; align-items:center; padding:0 10px; font-weight:bold; }
+  input, textarea, button { margin: 5px 0; }
+  textarea { width:100%; height:100%; resize:none; }
+</style>
+</head>
+<body>
+
+<div class="desktop" id="desktop">
+  <div class="taskbar">Start | Taskbar Apps</div>
+</div>
+
+<script>
+const desktop = document.getElementById('desktop');
+let windows = [];
+let zIndexCounter = 1;
+
+// Apps
+const apps = [
+  { name: "Calculator", emoji:"🧮" },
+  { name: "Notepad", emoji:"📝" },
+  { name: "File Explorer", emoji:"🗂️" },
+  { name: "Settings", emoji:"⚙️" },
+  { name: "Microsoft Edge", emoji:"🌐" },
+  { name: "Mail", emoji:"✉️" },
+  { name: "Calendar", emoji:"📅" },
+  { name: "Photos", emoji:"🖼️" },
+  { name: "Music", emoji:"🎵" },
+  { name: "Video Player", emoji:"🎬" },
+  { name: "Paint", emoji:"🎨" },
+  { name: "Word", emoji:"📝" },
+  { name: "Excel", emoji:"📊" },
+  { name: "PowerPoint", emoji:"📈" },
+  { name: "Camera", emoji:"📷" },
+  { name: "Snipping Tool", emoji:"✂️" },
+  { name: "Weather", emoji:"☀️" },
+  { name: "Clock", emoji:"⏰" },
+  { name: "Maps", emoji:"🗺️" },
+  { name: "Command Prompt", emoji:"💻" },
+  { name: "Control Panel", emoji:"🖥️" },
+  { name: "Windows Update", emoji:"🔄" },
+  { name: "Photoshop", emoji:"🖌️" },
+  { name: "Games / Solitaire", emoji:"🃏" },
+  { name: "Sticky Notes", emoji:"🗒️" },
+  { name: "Voice Recorder", emoji:"🎤" }
+];
+
+// Create icons
+apps.forEach(app=>{
+  const icon = document.createElement('div');
+  icon.className = 'icon';
+  icon.innerHTML = `${app.emoji} ${app.name}`;
+  icon.ondblclick = () => openWindow(app.name);
+  desktop.appendChild(icon);
+});
+
+// Open window
+function openWindow(name){
+  const winId = 'win' + Date.now();
+  const winDiv = document.createElement('div');
+  winDiv.className = 'window';
+  winDiv.id = winId;
+  winDiv.style.zIndex = zIndexCounter++;
+
+  winDiv.innerHTML = `
+    <div class="title-bar">${name} <button style="cursor:pointer;">X</button></div>
+    <div class="window-content"></div>
+  `;
+  desktop.appendChild(winDiv);
+
+  // Close button
+  winDiv.querySelector('button').onclick = ()=>winDiv.remove();
+
+  // Drag
+  const titleBar = winDiv.querySelector('.title-bar');
+  titleBar.onmousedown = (e)=>{
+    const offsetX = e.clientX - winDiv.offsetLeft;
+    const offsetY = e.clientY - winDiv.offsetTop;
+
+    function moveAt(e){
+      winDiv.style.left = e.clientX - offsetX + 'px';
+      winDiv.style.top = e.clientY - offsetY + 'px';
+    }
+
+    document.addEventListener('mousemove', moveAt);
+    document.addEventListener('mouseup', ()=>document.removeEventListener('mousemove', moveAt), {once:true});
+  };
+
+  // Fill content
+  const content = winDiv.querySelector('.window-content');
+  switch(name){
+    case "Calculator": content.appendChild(Calculator()); break;
+    case "Notepad": content.appendChild(Notepad()); break;
+    case "Clock": content.appendChild(Clock()); break;
+    case "Sticky Notes": content.appendChild(StickyNotes()); break;
+    default: content.innerHTML = `<p>${name} content goes here.</p>`;
+  }
+}
+
+// ----------------- App Components -----------------
+
+function Calculator(){
+  const container = document.createElement('div');
+  const inputA = document.createElement('input'); inputA.placeholder="Number 1"; inputA.type="number";
+  const inputB = document.createElement('input'); inputB.placeholder="Number 2"; inputB.type="number";
+  const btn = document.createElement('button'); btn.innerText="Add";
+  const result = document.createElement('p');
+
+  btn.onclick = ()=>{
+    const a = parseFloat(inputA.value)||0;
+    const b = parseFloat(inputB.value)||0;
+    result.innerText = "Result: " + (a+b);
+  }
+
+  container.appendChild(inputA);
+  container.appendChild(inputB);
+  container.appendChild(btn);
+  container.appendChild(result);
+  return container;
+}
+
+function Notepad(){
+  const ta = document.createElement('textarea');
+  return ta;
+}
+
+function Clock(){
+  const p = document.createElement('p');
+  function updateTime(){ p.innerText = new Date().toLocaleTimeString(); }
+  updateTime();
+  setInterval(updateTime,1000);
+  return p;
+}
+
+function StickyNotes(){
+  const ta = document.createElement('textarea');
+  const key = 'stickyNote';
+  ta.value = localStorage.getItem(key) || '';
+  ta.oninput = ()=>localStorage.setItem(key, ta.value);
+  return ta;
+}
+</script>
+
+</body>
+</html>
