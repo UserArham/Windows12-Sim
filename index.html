@@ -1,90 +1,79 @@
-<!DOCTYPE html>
+B<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Windows 12 Simulator</title>
 <style>
-/* ---------- Desktop ---------- */
-body, html {
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  font-family:"Segoe UI",sans-serif;
-  background:#222;
-}
+/* ---------- Reset ---------- */
+* {margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",sans-serif;}
 
+/* ---------- Desktop ---------- */
+body, html {width:100%; height:100%; overflow:hidden;}
 .desktop {
   width:100vw;
   height:100vh;
   position:relative;
-  overflow:hidden;
-  background-image: url("https://wallpapercave.com/wp/wp13842758.png");
-  background-size: cover;
-  background-position: center;
-  filter: brightness(0.95);
+  background: url("https://wallpapercave.com/wp/wp13842758.png") center/cover no-repeat;
 }
 
-/* ---------- Desktop Icons ---------- */
+/* ---------- Icons ---------- */
 .icon {
   width:100px;
   text-align:center;
   margin:10px;
-  cursor:pointer;
-  color:#f0f0f0;
+  color:white;
   display:inline-block;
   user-select:none;
   font-weight:500;
-  text-shadow: 0 0 5px rgba(0,0,0,0.7);
+  text-shadow: 0 0 5px rgba(0,0,0,0.8);
+  cursor:pointer;
   transition:0.2s;
 }
-.icon:hover {
-  color:#fff;
-  transform:scale(1.05);
-}
+.icon:hover {transform:scale(1.1);}
 
 /* ---------- Windows ---------- */
 .window {
-  width:350px;
-  height:250px;
+  position:absolute;
+  width:360px;
+  height:260px;
   background:#f7f7f7;
-  border:1px solid #888;
-  box-shadow:4px 4px 20px rgba(0,0,0,0.3);
+  border-radius:8px;
+  box-shadow: 4px 4px 20px rgba(0,0,0,0.5);
+  overflow:hidden;
   display:flex;
   flex-direction:column;
-  position:absolute;
-  border-radius:6px;
-  overflow:hidden;
   resize:both;
-  font-size:14px;
 }
 .title-bar {
-  background:#4a60d1;
+  background: linear-gradient(to right,#4a60d1,#6c7ce3);
   color:white;
-  padding:5px 10px;
+  padding:6px 10px;
+  cursor:grab;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  cursor:move;
+  font-weight:bold;
 }
 .title-bar button {
-  width:22px;
-  height:22px;
-  background:#ff5f56;
+  width:20px; height:20px;
   border:none;
   border-radius:50%;
+  margin-left:4px;
   cursor:pointer;
 }
-.title-bar button:hover {background:#ff1f1f;}
+.title-bar button.close {background:#ff5f56;}
+.title-bar button.min {background:#ffbd2e;}
+.title-bar button.max {background:#27c93f;}
+.title-bar button:hover {filter:brightness(1.2);}
 .window-content {
   flex:1;
   padding:10px;
-  overflow:auto;
   background:#fff;
+  overflow:auto;
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:8px;
 }
 
 /* ---------- Taskbar ---------- */
@@ -93,12 +82,12 @@ body, html {
   bottom:0;
   width:100%;
   height:40px;
-  background:rgba(60,60,200,0.9);
-  color:white;
+  background:rgba(60,60,200,0.85);
   display:flex;
   align-items:center;
   padding:0 10px;
-  box-shadow:0 -2px 10px rgba(0,0,0,0.3);
+  box-shadow:0 -3px 10px rgba(0,0,0,0.4);
+  color:white;
   font-weight:bold;
 }
 .start-button {
@@ -119,34 +108,29 @@ body, html {
   width:220px;
   max-height:400px;
   background:#f7f7f7;
-  border:1px solid #888;
-  border-radius:5px;
+  border-radius:6px;
+  box-shadow: 2px 2px 15px rgba(0,0,0,0.3);
   overflow-y:auto;
   display:none;
   z-index:9999;
 }
 .start-menu div {
   padding:8px 10px;
-  cursor:pointer;
   border-bottom:1px solid #ddd;
+  cursor:pointer;
 }
 .start-menu div:hover {background:#4a60d1; color:white;}
 
 /* ---------- Styled Elements ---------- */
-textarea, input[type=text], input[type=email], input[type=number], select {
+textarea, input[type=text], input[type=number], select {
   width:100%;
   padding:6px;
   border:1px solid #aaa;
   border-radius:4px;
-  font-size:14px;
-  box-sizing:border-box;
 }
 button.app-btn {
-  background:#4a60d1;
-  color:white;
-  border:none;
-  padding:5px 8px;
-  border-radius:4px;
+  background:#4a60d1; color:white;
+  border:none; padding:5px 8px; border-radius:4px;
   cursor:pointer;
 }
 button.app-btn:hover {background:#2d3ca7;}
@@ -168,30 +152,35 @@ canvas {border:1px solid #888; border-radius:4px;}
 /* ---------- Window Function ---------- */
 function makeWindow(title, contentElement){
   const desktop=document.getElementById('desktop');
-  const winDiv=document.createElement('div');
-  winDiv.className='window';
-  winDiv.style.left='50px';
-  winDiv.style.top='50px';
-  winDiv.style.zIndex=Date.now();
-  winDiv.innerHTML=`<div class="title-bar">${title} <button>X</button></div><div class="window-content"></div>`;
-  desktop.appendChild(winDiv);
-  winDiv.querySelector('.window-content').appendChild(contentElement);
+  const win=document.createElement('div');
+  win.className='window';
+  win.style.left='60px'; win.style.top='60px';
+  win.style.zIndex=Date.now();
+  win.innerHTML=`<div class="title-bar">${title}
+    <div>
+      <button class="min"></button>
+      <button class="max"></button>
+      <button class="close"></button>
+    </div>
+  </div><div class="window-content"></div>`;
+  desktop.appendChild(win);
+  win.querySelector('.window-content').appendChild(contentElement);
 
-  // Close button
-  winDiv.querySelector('button').onclick=()=>winDiv.remove();
+  // Close
+  win.querySelector('.close').onclick=()=>win.remove();
 
   // Dragging
-  const titleBar=winDiv.querySelector('.title-bar');
+  const titleBar=win.querySelector('.title-bar');
   titleBar.onmousedown=(e)=>{
-    const offsetX=e.clientX-winDiv.offsetLeft;
-    const offsetY=e.clientY-winDiv.offsetTop;
-    function move(e){winDiv.style.left=e.clientX-offsetX+'px';winDiv.style.top=e.clientY-offsetY+'px';}
+    const offsetX=e.clientX-win.offsetLeft;
+    const offsetY=e.clientY-win.offsetTop;
+    function move(e){win.style.left=e.clientX-offsetX+'px';win.style.top=e.clientY-offsetY+'px';}
     document.addEventListener('mousemove',move);
     document.addEventListener('mouseup',()=>document.removeEventListener('mousemove',move),{once:true});
   };
 }
 
-/* ---------- Apps (Polished Interiors) ---------- */
+/* ---------- Apps ---------- */
 const apps=[
 {name:"Calculator",run:()=>{
   const div=document.createElement('div');
@@ -204,47 +193,24 @@ const apps=[
 }},
 {name:"Notepad",run:()=>{const ta=document.createElement('textarea'); ta.style.height='100%'; ta.placeholder='Write notes here...'; return ta;}},
 {name:"Clock",run:()=>{const p=document.createElement('p'); p.style.fontSize='24px'; function update(){p.innerText=new Date().toLocaleTimeString();} update(); setInterval(update,1000); return p;}},
-{name:"Sticky Notes",run:()=>{const ta=document.createElement('textarea'); ta.style.height='100%'; ta.value=localStorage.getItem('sticky')||''; ta.oninput=()=>localStorage.setItem('sticky',ta.value); return ta;}},
-{name:"Paint",run:()=>{
-  const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200;
-  const ctx=canvas.getContext('2d'); ctx.lineWidth=2; ctx.strokeStyle='black';
-  let drawing=false;
-  canvas.onmousedown=e=>drawing=true;
-  canvas.onmouseup=e=>drawing=false;
-  canvas.onmousemove=e=>{if(drawing){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke();ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY);}};
-  return canvas;
-}},
-{name:"Command Prompt",run:()=>{
-  const ta=document.createElement('textarea'); ta.style.height='100%'; ta.value="> ";
-  ta.onkeydown=(e)=>{if(e.key==='Enter'){const cmd=ta.value.split('\n').pop().replace('> ',''); ta.value+="\nExecuted: "+cmd+"\n> "; e.preventDefault();}};
-  return ta;
-}},
-{name:"C App Simulator",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C output"; return p;}},
-{name:"C++ App Simulator",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C++ output"; return p;}},
-{name:"Music",run:()=>{const audio=document.createElement('audio'); audio.controls=true; audio.src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"; return audio;}},
-{name:"Video Player",run:()=>{const vid=document.createElement('video'); vid.controls=true; vid.width=320; vid.src="https://www.w3schools.com/html/mov_bbb.mp4"; return vid;}},
-{name:"Photos",run:()=>{const div=document.createElement('div'); for(let i=1;i<=3;i++){const img=document.createElement('img'); img.src=`https://picsum.photos/200/150?random=${i}`; img.style.margin='3px'; div.appendChild(img);} return div;}},
-{name:"Word",run:()=>{const ta=document.createElement('textarea'); ta.style.height='100%'; ta.placeholder="Document editor"; return ta;}},
-{name:"Excel",run:()=>{const table=document.createElement('table'); for(let i=0;i<5;i++){const tr=document.createElement('tr'); for(let j=0;j<5;j++){const td=document.createElement('td'); td.contentEditable=true; td.innerText=i*5+j; tr.appendChild(td);} table.appendChild(tr);} return table;}},
-{name:"PowerPoint",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>Slide 1: Welcome</p><p>Slide 2: Features</p><p>Slide 3: Thank you</p>'; return div;}},
-{name:"Camera",run:()=>{const vid=document.createElement('video'); vid.autoplay=true; navigator.mediaDevices.getUserMedia({video:true}).then(s=>vid.srcObject=s).catch(()=>vid.innerText="Camera denied"); return vid;}},
-{name:"Snipping Tool",run:()=>{const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200; canvas.style.border='1px solid #888'; return canvas;}},
-{name:"Weather",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>NYC</p><p>Temp: 12°C</p><p>Sunny</p>'; return div;}},
-{name:"Maps",run:()=>{const iframe=document.createElement('iframe'); iframe.width='100%'; iframe.height='200'; iframe.src='https://www.openstreetmap.org/export/embed.html?bbox=-74.02%2C40.70%2C-73.95%2C40.75&layer=mapnik'; return iframe;}},
-{name:"Control Panel",run:()=>{const div=document.createElement('div'); div.innerHTML='<label>Volume: <input type="range" min="0" max="100" value="50"></label><br><label>Brightness: <input type="range" min="0" max="100" value="70"></label>'; return div;}},
-{name:"Windows Update",run:()=>{const p=document.createElement('p'); p.innerText='Checking updates...'; setTimeout(()=>p.innerText='All updates installed',2000); return p;}},
-{name:"Photoshop",run:()=>{const canvas=document.createElement('canvas'); canvas.width=300; canvas.height=200; const ctx=canvas.getContext('2d'); ctx.fillStyle='lightblue'; ctx.fillRect(0,0,300,200); return canvas;}},
-{name:"Games / Solitaire",run:()=>{const p=document.createElement('p'); p.innerText='Solitaire game demo'; return p;}},
-{name:"Mail",run:()=>{const form=document.createElement('form'); form.innerHTML='<label>To: <input type="email"></label><br><label>Subject: <input type="text"></label><br><textarea placeholder="Message"></textarea><br><button class="app-btn" type="submit">Send</button>'; return form;}},
-{name:"Calendar",run:()=>{const table=document.createElement('table'); const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; const tr=document.createElement('tr'); days.forEach(d=>{const th=document.createElement('th'); th.innerText=d; tr.appendChild(th);}); table.appendChild(tr); for(let i=0;i<5;i++){const row=document.createElement('tr'); for(let j=1;j<=7;j++){const td=document.createElement('td'); td.innerText=(i*7+j); row.appendChild(td);} table.appendChild(row);} return table;}},
+{name:"Paint",run:()=>{const canvas=document.createElement('canvas'); canvas.width=320; canvas.height=200; const ctx=canvas.getContext('2d'); ctx.lineWidth=2; ctx.strokeStyle='black'; let drawing=false;
+canvas.onmousedown=e=>drawing=true; canvas.onmouseup=e=>{drawing=false; ctx.beginPath();}; 
+canvas.onmousemove=e=>{if(drawing){ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.offsetX,e.offsetY);}};
+return canvas;}},
 {name:"File Explorer",run:()=>{const ul=document.createElement('ul'); ['Documents','Downloads','Pictures','Music'].forEach(f=>{const li=document.createElement('li'); li.innerText=f; ul.appendChild(li);}); return ul;}},
-{name:"Settings",run:()=>{const div=document.createElement('div'); div.innerHTML='<label>Dark Mode: <input type="checkbox"></label><br><label>Notifications: <input type="checkbox" checked></label>'; return div;}},
+{name:"C App",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C output..."; return p;}},
+{name:"C++ App",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C++ output..."; return p;}},
+{name:"Weather",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>NYC</p><p>Temp: 12°C</p><p>Sunny</p>'; return div;}},
+{name:"Calendar",run:()=>{const table=document.createElement('table'); const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; const tr=document.createElement('tr'); days.forEach(d=>{const th=document.createElement('th'); th.innerText=d; tr.appendChild(th);}); table.appendChild(tr);
+for(let i=0;i<5;i++){const row=document.createElement('tr'); for(let j=1;j<=7;j++){const td=document.createElement('td'); td.innerText=(i*7+j); row.appendChild(td);} table.appendChild(row);} return table;}},
+{name:"Music",run:()=>{const audio=document.createElement('audio'); audio.controls=true; audio.src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"; return audio;}},
+{name:"Video Player",run:()=>{const vid=document.createElement('video'); vid.controls=true; vid.width=320; vid.src="https://www.w3schools.com/html/mov_bbb.mp4"; return vid;}}
 ];
 
 /* ---------- Desktop Icons ---------- */
 const desktop=document.getElementById('desktop');
 apps.forEach(app=>{
-  const icon=document.createElement('div');icon.className='icon';icon.innerText=app.name;
+  const icon=document.createElement('div'); icon.className='icon'; icon.innerText=app.name;
   icon.ondblclick=()=>{makeWindow(app.name,app.run());};
   desktop.appendChild(icon);
 });
