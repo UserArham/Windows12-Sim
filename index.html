@@ -1,9 +1,9 @@
-B<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Windows 12 Simulator</title>
+<title>Windows 12 Visual Simulator</title>
 <style>
 /* ---------- Reset ---------- */
 * {margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",sans-serif;}
@@ -17,9 +17,9 @@ body, html {width:100%; height:100%; overflow:hidden;}
   background: url("https://wallpapercave.com/wp/wp13842758.png") center/cover no-repeat;
 }
 
-/* ---------- Icons ---------- */
+/* ---------- Desktop Icons ---------- */
 .icon {
-  width:100px;
+  width:80px;
   text-align:center;
   margin:10px;
   color:white;
@@ -30,16 +30,24 @@ body, html {width:100%; height:100%; overflow:hidden;}
   cursor:pointer;
   transition:0.2s;
 }
+.icon img {
+  width:60px;
+  height:60px;
+  display:block;
+  margin:0 auto 4px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.4);
+}
 .icon:hover {transform:scale(1.1);}
 
 /* ---------- Windows ---------- */
 .window {
   position:absolute;
-  width:360px;
-  height:260px;
+  width:400px;
+  height:300px;
   background:#f7f7f7;
   border-radius:8px;
-  box-shadow: 4px 4px 20px rgba(0,0,0,0.5);
+  box-shadow: 5px 5px 25px rgba(0,0,0,0.5);
   overflow:hidden;
   display:flex;
   flex-direction:column;
@@ -138,6 +146,7 @@ table {border-collapse:collapse; width:100%;}
 table, th, td {border:1px solid #888; text-align:center; padding:4px;}
 th {background:#ddd;}
 canvas {border:1px solid #888; border-radius:4px;}
+img.app-img {width:100%; max-height:200px; object-fit:cover; border-radius:6px;}
 </style>
 </head>
 <body>
@@ -180,37 +189,46 @@ function makeWindow(title, contentElement){
   };
 }
 
-/* ---------- Apps ---------- */
+/* ---------- Apps with Pictures ---------- */
 const apps=[
-{name:"Calculator",run:()=>{
+{name:"Photos",run:()=>{
   const div=document.createElement('div');
-  const a=document.createElement('input'); a.type='number'; a.placeholder='Num 1';
+  ['https://picsum.photos/300/150?random=1','https://picsum.photos/300/150?random=2','https://picsum.photos/300/150?random=3'].forEach(src=>{
+    const img=document.createElement('img'); img.src=src; img.className='app-img'; img.style.marginBottom='6px';
+    div.appendChild(img);
+  });
+  return div;
+}},
+{name:"Video Player",run:()=>{
+  const vid=document.createElement('video'); vid.controls=true; vid.width=360; vid.src='https://www.w3schools.com/html/mov_bbb.mp4';
+  return vid;
+}},
+{name:"Music",run:()=>{
+  const audio=document.createElement('audio'); audio.controls=true; audio.src='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'; return audio;
+}},
+{name:"Paint",run:()=>{
+  const canvas=document.createElement('canvas'); canvas.width=360; canvas.height=200; const ctx=canvas.getContext('2d');
+  ctx.fillStyle='lightblue'; ctx.fillRect(0,0,360,200);
+  return canvas;
+}},
+{name:"Calculator",run:()=>{
+  const div=document.createElement('div'); const a=document.createElement('input'); a.type='number'; a.placeholder='Num 1';
   const b=document.createElement('input'); b.type='number'; b.placeholder='Num 2';
-  const btn=document.createElement('button'); btn.className='app-btn'; btn.innerText='Add';
-  const res=document.createElement('p');
+  const btn=document.createElement('button'); btn.className='app-btn'; btn.innerText='Add'; const res=document.createElement('p');
   btn.onclick=()=>{res.innerText='Result: '+(parseFloat(a.value||0)+parseFloat(b.value||0));};
   div.append(a,b,btn,res); return div;
 }},
-{name:"Notepad",run:()=>{const ta=document.createElement('textarea'); ta.style.height='100%'; ta.placeholder='Write notes here...'; return ta;}},
+{name:"Notepad",run:()=>{const ta=document.createElement('textarea'); ta.style.height='100%'; ta.placeholder='Write notes...'; return ta;}},
 {name:"Clock",run:()=>{const p=document.createElement('p'); p.style.fontSize='24px'; function update(){p.innerText=new Date().toLocaleTimeString();} update(); setInterval(update,1000); return p;}},
-{name:"Paint",run:()=>{const canvas=document.createElement('canvas'); canvas.width=320; canvas.height=200; const ctx=canvas.getContext('2d'); ctx.lineWidth=2; ctx.strokeStyle='black'; let drawing=false;
-canvas.onmousedown=e=>drawing=true; canvas.onmouseup=e=>{drawing=false; ctx.beginPath();}; 
-canvas.onmousemove=e=>{if(drawing){ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.offsetX,e.offsetY);}};
-return canvas;}},
 {name:"File Explorer",run:()=>{const ul=document.createElement('ul'); ['Documents','Downloads','Pictures','Music'].forEach(f=>{const li=document.createElement('li'); li.innerText=f; ul.appendChild(li);}); return ul;}},
-{name:"C App",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C output..."; return p;}},
-{name:"C++ App",run:()=>{const p=document.createElement('p'); p.innerText="Simulated C++ output..."; return p;}},
-{name:"Weather",run:()=>{const div=document.createElement('div'); div.innerHTML='<p>NYC</p><p>Temp: 12°C</p><p>Sunny</p>'; return div;}},
-{name:"Calendar",run:()=>{const table=document.createElement('table'); const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; const tr=document.createElement('tr'); days.forEach(d=>{const th=document.createElement('th'); th.innerText=d; tr.appendChild(th);}); table.appendChild(tr);
-for(let i=0;i<5;i++){const row=document.createElement('tr'); for(let j=1;j<=7;j++){const td=document.createElement('td'); td.innerText=(i*7+j); row.appendChild(td);} table.appendChild(row);} return table;}},
-{name:"Music",run:()=>{const audio=document.createElement('audio'); audio.controls=true; audio.src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"; return audio;}},
-{name:"Video Player",run:()=>{const vid=document.createElement('video'); vid.controls=true; vid.width=320; vid.src="https://www.w3schools.com/html/mov_bbb.mp4"; return vid;}}
+{name:"Calendar",run:()=>{const table=document.createElement('table'); const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; const tr=document.createElement('tr'); days.forEach(d=>{const th=document.createElement('th'); th.innerText=d; tr.appendChild(th);}); table.appendChild(tr); for(let i=0;i<5;i++){const row=document.createElement('tr'); for(let j=1;j<=7;j++){const td=document.createElement('td'); td.innerText=(i*7+j); row.appendChild(td);} table.appendChild(row);} return table;}}
 ];
 
 /* ---------- Desktop Icons ---------- */
 const desktop=document.getElementById('desktop');
 apps.forEach(app=>{
-  const icon=document.createElement('div'); icon.className='icon'; icon.innerText=app.name;
+  const icon=document.createElement('div'); icon.className='icon'; 
+  icon.innerHTML=`<img src="https://picsum.photos/60?random=${Math.floor(Math.random()*100)}"><span>${app.name}</span>`;
   icon.ondblclick=()=>{makeWindow(app.name,app.run());};
   desktop.appendChild(icon);
 });
