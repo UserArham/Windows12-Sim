@@ -3,15 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Windows 12 Simulator</title>
+<title>Windows 12 Simulator - Lavender Blue Theme</title>
 <style>
+  /* ----- Basic Reset ----- */
   body, html { margin:0; padding:0; width:100%; height:100%; font-family:sans-serif; }
-  .desktop { width:100vw; height:100vh; background: linear-gradient(to bottom right, #0078d7, #00bcf2); position:relative; overflow:hidden; }
-  .icon { width:100px; text-align:center; margin:10px; cursor:pointer; color:white; display:inline-block; user-select:none; }
-  .window { width:350px; height:250px; background:white; position:absolute; top:100px; left:100px; border:1px solid #000; box-shadow:2px 2px 10px rgba(0,0,0,0.5); display:flex; flex-direction:column; }
-  .title-bar { background:#0078d7; color:white; padding:5px; display:flex; justify-content:space-between; cursor:move; }
-  .window-content { padding:10px; flex:1; overflow:auto; }
-  .taskbar { position:absolute; bottom:0; width:100%; height:40px; background:#333; color:white; display:flex; align-items:center; padding:0 10px; font-weight:bold; }
+
+  /* ----- Desktop ----- */
+  .desktop {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(-45deg, #c4c4f1, #a0c4ff, #d2c4ff, #c4d4ff);
+    background-size: 400% 400%;
+    animation: glow 20s ease infinite;
+  }
+
+  @keyframes glow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ----- Desktop Icons ----- */
+  .icon {
+    width: 100px;
+    text-align: center;
+    margin: 10px;
+    cursor: pointer;
+    color: #4b4b7b;
+    display: inline-block;
+    user-select: none;
+    font-weight: 500;
+  }
+  .icon:hover {
+    color: #726dcf;
+    transform: scale(1.05);
+    transition: 0.2s;
+  }
+
+  /* ----- Windows ----- */
+  .window {
+    width: 350px;
+    height: 250px;
+    background: #f7f5fb;
+    border: 1px solid #b0aee0;
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+  }
+
+  .title-bar {
+    background: #8e9cf3;
+    color: #ffffff;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    cursor: move;
+    border-bottom: 1px solid #d0cfff;
+  }
+
+  .window-content {
+    padding: 10px;
+    flex: 1;
+    overflow:auto;
+  }
+
+  /* ----- Taskbar ----- */
+  .taskbar {
+    position: absolute;
+    bottom:0;
+    width: 100%;
+    height: 40px;
+    background: #5f65c0;
+    color: #f7f5fb;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-weight: bold;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  }
+
+  /* ----- Inputs & Buttons ----- */
   input, textarea, button { margin: 5px 0; }
   textarea { width:100%; height:100%; resize:none; }
 </style>
@@ -24,10 +98,9 @@
 
 <script>
 const desktop = document.getElementById('desktop');
-let windows = [];
 let zIndexCounter = 1;
 
-// Apps
+// ----- Apps -----
 const apps = [
   { name: "Calculator", emoji:"🧮" },
   { name: "Notepad", emoji:"📝" },
@@ -57,16 +130,16 @@ const apps = [
   { name: "Voice Recorder", emoji:"🎤" }
 ];
 
-// Create icons
+// ----- Create desktop icons -----
 apps.forEach(app=>{
   const icon = document.createElement('div');
   icon.className = 'icon';
   icon.innerHTML = `${app.emoji} ${app.name}`;
-  icon.ondblclick = () => openWindow(app.name);
+  icon.ondblclick = ()=>openWindow(app.name);
   desktop.appendChild(icon);
 });
 
-// Open window
+// ----- Open window -----
 function openWindow(name){
   const winId = 'win' + Date.now();
   const winDiv = document.createElement('div');
@@ -110,7 +183,6 @@ function openWindow(name){
 }
 
 // ----------------- App Components -----------------
-
 function Calculator(){
   const container = document.createElement('div');
   const inputA = document.createElement('input'); inputA.placeholder="Number 1"; inputA.type="number";
